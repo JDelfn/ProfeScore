@@ -6,6 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evaluación Docente</title>
     <style>
+        .escala-container {
+  width: 100%;
+  overflow-x: auto; /* Permite desplazamiento horizontal si es necesario */
+  padding: 10px 0;
+}
+
+/* Opciones de la escala (botones o elementos interactivos) */
+.opcion-escala {
+  min-width: 40px; /* Ancho mínimo para tacto fácil */
+  height: 40px;
+  margin: 5px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Media Query para pantallas pequeñas */
+@media (max-width: 600px) {
+  .opcion-escala {
+    min-width: 35px;
+    height: 35px;
+    font-size: 12px;
+  }
+}
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
