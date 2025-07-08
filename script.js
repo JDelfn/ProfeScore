@@ -158,7 +158,7 @@ function crearEvaluaciones() {
         </div>
         
         <label for="${profesor}-comments">Comentarios adicionales:</label>
-        <textarea id="${profesor}-comments" rows="4" placeholder="Escribe aquí tus comentarios..."></textarea>
+        <textarea id="${profesor}-comments" rows="4" placeholder="Escribe aquí tu opinion o recomendacion del docente..."></textarea>
       </div>`;
     
     container.insertAdjacentHTML('beforeend', evaluationHTML);
