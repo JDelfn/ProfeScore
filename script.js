@@ -101,11 +101,6 @@ function useCachedData(data) {
     });
 }
 
-function updateCache(data) {
-    localStorage.setItem('formDataCache', JSON.stringify(data));
-    localStorage.setItem('formDataCacheTime', Date.now());
-}
-
 // Funciones para manejar la UI de carga
 function showLoadingState() {
     const loadingScreen = document.getElementById('loading-screen');
