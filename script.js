@@ -26,6 +26,12 @@ function clearCache() {
     try {
         localStorage.removeItem('formDataCache');
         localStorage.removeItem('formDataCacheTime');
+        
+        // Opcional: Limpiar caché de Firebase
+        caches.delete('firebase-firestore').then(() => {
+            console.log('Caché de Firestore limpiada');
+        });
+        
         console.log('Caché limpiada correctamente');
         return true;
     } catch (e) {
