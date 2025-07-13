@@ -30,7 +30,8 @@ function clearCache() {
         // Opcional: Limpiar caché de Firebase
         caches.delete('firebase-firestore').then(() => {
             console.log('Caché de Firestore limpiada');
-        });
+        }
+        );
         
         console.log('Caché limpiada correctamente');
         return true;
@@ -85,11 +86,13 @@ function useCachedData(data) {
             
             gruposPorSemestre = {};
             Object.entries(data.gruposPorSemestre).forEach(([key, value]) => {
+                console.log(`Procesando semestre ${key} con grupos:`, value);
                 gruposPorSemestre[key.toString()] = value.map(String);
             });
 
             profesoresPorGrupo = {};
             Object.entries(data.profesoresPorGrupo).forEach(([key, value]) => {
+                console.log(`Procesando grupo ${key} con profesores:`, value);
                 profesoresPorGrupo[key.toString()] = value.map(String);
             });
 
@@ -336,7 +339,7 @@ selectedTeachers.forEach(profesor => {
 }
 
 // Configuración de event listeners
-function configurarEventListeners() {
+function configurarEventListeners(){
   // Navegación entre secciones
   document.getElementById('next-to-groups').addEventListener('click', () => {
     if (llenarGruposEnColumnas()) {
@@ -491,3 +494,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 100);
 });
+}
