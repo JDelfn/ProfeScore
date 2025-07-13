@@ -23,22 +23,31 @@ function initSkeletonTimeout() {
 
 // Limpia la caché local del formulario
 function clearCache() {
-    try {
-        localStorage.removeItem('formDataCache');
-        localStorage.removeItem('formDataCacheTime');
-        
-        // Opcional: Limpiar caché de Firebase
-        caches.delete('firebase-firestore').then(() => {
-            console.log('Caché de Firestore limpiada');
+    return new Promise((resolve) => {
+        try {
+            console.log("[CACHE] Limpiando caché local");
+            localStorage.removeItem('formDataCache');
+            localStorage.removeItem('formDataCacheTime');
+            
+            // Limpiar caché de Firebase
+            if (caches && caches.delete) {
+                caches.delete('firebase-firestore')
+                    .then(() => console.log("[CACHE] Cache de Firestore limpiada"))
+                    .catch(e => console.warn("[CACHE] Error limpiando cache de Firestore:", e));
+            }
+            
+            // Recargar después de 500ms
+            setTimeout(() => {
+                window.location.reload(true);
+                resolve(true);
+            }, 500);
+            
+        } catch (e) {
+            console.error("[CACHE] Error crítico:", e);
+            alert("Error grave al limpiar caché. Por favor recarga manualmente.");
+            resolve(false);
         }
-        );
-        
-        console.log('Caché limpiada correctamente');
-        return true;
-    } catch (e) {
-        console.error('Error limpiando caché:', e);
-        return false;
-    }
+    });
 }
 
 // Funciones auxiliares para la carga
@@ -124,6 +133,7 @@ function showLoadingState() {
 }
 
 function hideLoadingState() {
+    console.log("[LOADER] Ocultando pantalla de carga");
     clearTimeout(skeletonTimeout);
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) {
@@ -138,27 +148,40 @@ function hideLoadingState() {
 // Función principal para cargar datos
 async function cargarDatos() {
     try {
-        console.log("Iniciando carga de datos...");
+        console.log("[1] Iniciando carga de datos");
+        
+        // Verificar si Firebase está listo
+        if (typeof firebase === 'undefined' || !firebase.apps.length) {
+            throw new Error("Firebase no está disponible");
+        }
+        
+        // Verificar caché
         const { cachedData, isFresh } = checkCache();
+        console.log("[2] Estado de caché:", { cachedData: !!cachedData, isFresh });
         
         if (cachedData && isFresh) {
-            console.log('Usando datos de caché');
+            console.log("[3] Usando datos de caché");
             await useCachedData(cachedData);
         } else {
-            console.log("Obteniendo datos frescos...");
-            showLoadingState();
+            console.log("[3] Obteniendo datos frescos");
             const data = await fetchData();
+            console.log("[4] Datos recibidos:", data);
             updateCache(data);
             await useCachedData(data);
         }
         
+        console.log("[5] Configurando listeners");
         configurarEventListeners();
+        
+        console.log("[6] Mostrando formulario");
         document.getElementById('semesters-section').classList.remove('hidden');
+        document.getElementById('form-container').style.display = 'block';
         
     } catch (error) {
-        console.error('Error:', error);
+        console.error("[ERROR] En cargarDatos:", error);
         showErrorState(error);
     } finally {
+        console.log("[7] Ocultando loader");
         hideLoadingState();
     }
 }
@@ -377,15 +400,15 @@ function configurarEventListeners(){
     document.getElementById('teachers-section').classList.remove('hidden');
   });
   
-  document.getElementById('clear-cache-btn')?.addEventListener('click', () => {
-        if(confirm('¿Estás seguro de querer limpiar la caché? Se cargarán datos frescos.')) {
-            if(clearCache()) {
-                window.location.reload();
-            } else {
-                alert('Ocurrió un error al limpiar la caché');
+  document.getElementById('clear-cache-btn').addEventListener('click', () => {
+    if (confirm('¿Estás seguro de querer limpiar la caché? Se cargarán datos frescos.')) {
+        clearCache().then(success => {
+            if (!success) {
+                alert('Ocurrió un error. Por favor recarga la página manualmente.');
             }
-        }
-    });
+        });
+    }
+});
   
   document.getElementById('next-to-contact').addEventListener('click', () => {
     // Validar que todas las evaluaciones estén completas
