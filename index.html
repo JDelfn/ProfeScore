@@ -243,6 +243,26 @@
         </button>
     </footer>
 
-    <script src="script.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+    
+<script>
+  // Configuración básica (usa tus valores)
+  const firebaseConfig = {
+    apiKey: "AIzaSyC-xvM9xOfg8SqdWej2ebMPQ75Im0mXpbc",
+    authDomain: "evaluacion-profesores-df107.firebaseapp.com",
+    projectId: "evaluacion-profesores-df107",
+    storageBucket: "evaluacion-profesores-df107.appspot.com",
+    messagingSenderId: "182131194576",
+    appId: "1:182131194576:web:fc4b91499a2bc1435cfcd5"
+  };
+
+  // Inicialización
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore(); // <-- Esta variable es clave
+</script>
+    
+    <script src="script.js"></script>
 </body>
 </html>
