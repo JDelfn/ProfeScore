@@ -248,7 +248,7 @@
     
 <script>
   // Configuración básica (usa tus valores)
-  const firebaseConfig = {
+   const firebaseConfig = {
     apiKey: "AIzaSyC-xvM9xOfg8SqdWej2ebMPQ75Im0mXpbc",
     authDomain: "evaluacion-profesores-df107.firebaseapp.com",
     projectId: "evaluacion-profesores-df107",
@@ -257,9 +257,21 @@
     appId: "1:182131194576:web:fc4b91499a2bc1435cfcd5"
   };
 
-  // Inicialización
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore(); // <-- Esta variable es clave
+  // Inicialización con manejo de errores
+  try {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    window.db = db; // Hacer disponible globalmente para debug
+  } catch (error) {
+    console.error("Error inicializando Firebase:", error);
+    document.getElementById('loading-screen').innerHTML = `
+      <div style="color: red; text-align: center;">
+        <h3>Error crítico</h3>
+        <p>No se pudo conectar a la base de datos</p>
+        <button onclick="window.location.reload()">Reintentar</button>
+      </div>
+    `;
+  }
 </script>
     
     <script src="script.js"></script>
