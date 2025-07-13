@@ -432,30 +432,65 @@ function configurarEventListeners() {
     document.getElementById('contact-section').classList.remove('hidden');
   });
   
-  document.getElementById('submit-form').addEventListener('click', () => {
-    const email = document.getElementById('email').value;
+  document.getElementById('submit-form').addEventListener('click', async () => {
+    // Validar que al menos un profesor fue calificado
+    let allRated = true;
+    let unratedTeachers = [];
     
-    // Aquí puedes enviar los datos al servidor
-    console.log('Datos a enviar:', {
-      semestres: selectedSemesters,
-      grupos: selectedGroups,
-      profesores: selectedTeachers,
-      evaluaciones: evaluations,
-      email: email
+    selectedTeachers.forEach(teacher => {
+        const rating = document.querySelector(`input[name="${teacher}-rating"]:checked`);
+        if (!rating) {
+            allRated = false;
+            unratedTeachers.push(teacher);
+        } else {
+            evaluations[teacher].rating = rating.value;
+            evaluations[teacher].comments = document.getElementById(`${teacher}-comments`).value;
+        }
     });
     
-    // Mostrar mensaje de confirmación
-    document.getElementById('contact-section').classList.add('hidden');
-    
-    if (email) {
-      document.getElementById('email-confirmation').innerHTML = `
-        <p>Se enviará una copia a: ${email}</p>
-      `;
+    if (!allRated) {
+        alert(`Por favor califica a todos los docentes. Faltan: ${unratedTeachers.join(', ')}`);
+        return;
     }
-    
-    document.getElementById('thank-you-message').classList.remove('hidden');
-  });
-}
+
+    // Preparar datos para Firestore
+    const data = {
+        semestres: selectedSemesters,
+        grupos: selectedGroups,
+        profesores: selectedTeachers,
+        evaluaciones: evaluations,
+        email: document.getElementById('email').value || 'anonimo',
+        fecha: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    // Mostrar estado de carga
+    const submitBtn = document.getElementById('submit-form');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Enviando... <span class="spinner-mini"></span>';
+
+    try {
+        // Guardar en Firestore
+        await db.collection("evaluaciones").add(data);
+        
+        // Mostrar confirmación
+        document.getElementById('contact-section').classList.add('hidden');
+        
+        if (data.email) {
+            document.getElementById('email-confirmation').innerHTML = `
+                <p>Se enviará una copia a: ${data.email}</p>
+            `;
+        }
+        
+        document.getElementById('thank-you-message').classList.remove('hidden');
+        
+    } catch (error) {
+        console.error("Error al guardar:", error);
+        alert("Ocurrió un error al enviar tu evaluación. Por favor intenta nuevamente.");
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Enviar Evaluación';
+    }
+});
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
