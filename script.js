@@ -75,45 +75,31 @@ async function fetchData() {
 }
 
 function useCachedData(data) {
-    console.log("Datos recibidos para cache:", data);
-    
-    if (!data || !data.gruposPorSemestre || !data.profesoresPorGrupo) {
-        const errorMsg = 'Datos en caché no válidos: ';
-        if (!data) errorMsg += 'data es null/undefined';
-        else if (!data.gruposPorSemestre) errorMsg += 'falta gruposPorSemestre';
-        else errorMsg += 'falta profesoresPorGrupo';
-        
-        console.error(errorMsg);
-        throw new Error(errorMsg);
-    }
-    
-    // Conversión de tipos
-    gruposPorSemestre = {};
-    Object.entries(data.gruposPorSemestre).forEach(([key, value]) => {
-        console.log(`Procesando semestre ${key} con grupos:`, value);
-        gruposPorSemestre[key.toString()] = value.map(String);
-    });
+    return new Promise((resolve, reject) => {
+        try {
+            console.log("Datos recibidos para cache:", data);
+            
+            if (!data || !data.gruposPorSemestre || !data.profesoresPorGrupo) {
+                throw new Error('Datos en caché no válidos');
+            }
+            
+            gruposPorSemestre = {};
+            Object.entries(data.gruposPorSemestre).forEach(([key, value]) => {
+                gruposPorSemestre[key.toString()] = value.map(String);
+            });
 
-    profesoresPorGrupo = {};
-    Object.entries(data.profesoresPorGrupo).forEach(([key, value]) => {
-        console.log(`Procesando grupo ${key} con profesores:`, value);
-        profesoresPorGrupo[key.toString()] = value.map(String);
-    });
+            profesoresPorGrupo = {};
+            Object.entries(data.profesoresPorGrupo).forEach(([key, value]) => {
+                profesoresPorGrupo[key.toString()] = value.map(String);
+            });
 
-    console.log("Datos finales cargados:", {
-        gruposPorSemestre, 
-        profesoresPorGrupo
+            console.log("Datos finales cargados:", { gruposPorSemestre, profesoresPorGrupo });
+            resolve();
+        } catch (error) {
+            reject(error);
+        }
     });
-    
-    configurarEventListeners();
 }
-
-try {
-        configurarEventListeners();
-        console.log('Listeners configurados exitosamente');
-    } catch (e) {
-        console.error('Error configurando listeners:', e);
-    }
 
 function updateCache(data) {
     localStorage.setItem('formDataCache', JSON.stringify(data));
@@ -154,26 +140,22 @@ function hideLoadingState() {
 // Función principal para cargar datos
 async function cargarDatos() {
     try {
-      console.log("Iniciando carga de datos...");
+        console.log("Iniciando carga de datos...");
         const { cachedData, isFresh } = checkCache();
-        console.log("Estado de caché:", { cachedData: !!cachedData, isFresh });
-        // 1. Verificar caché primero
+        
         if (cachedData && isFresh) {
             console.log('Usando datos de caché');
-            useCachedData(cachedData);
-            hideLoadingState();
-            return;
+            await useCachedData(cachedData);
+        } else {
+            console.log("Obteniendo datos frescos...");
+            showLoadingState();
+            const data = await fetchData();
+            updateCache(data);
+            await useCachedData(data);
         }
         
-        // 2. Cargar datos frescos
-        console.log("Obteniendo datos frescos...");
-        showLoadingState();
-        const data = await fetchData();
-        console.log("Datos obtenidos:", data);
-        
-        // 3. Actualizar caché
-        updateCache(data);
-        useCachedData(data);
+        configurarEventListeners();
+        document.getElementById('semesters-section').classList.remove('hidden');
         
     } catch (error) {
         console.error('Error:', error);
@@ -498,16 +480,19 @@ function configurarEventListeners() {
     }
 });
 
-// Inicialización
+    //Inicializacion
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM completamente cargado");
     showLoadingState();
     
-    cargarDatos().then(() => {
-        console.log("Datos cargados correctamente");
-        document.getElementById('semesters-section').classList.remove('hidden');
-    }).catch(error => {
-        console.error("Error en inicialización:", error);
-        showErrorState(error);
-    });
+    // Espera a que Firebase esté completamente cargado
+    const firebaseCheck = setInterval(() => {
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            clearInterval(firebaseCheck);
+            cargarDatos().catch(error => {
+                console.error("Error en inicialización:", error);
+                showErrorState(error);
+            });
+        }
+    }, 100);
 });
