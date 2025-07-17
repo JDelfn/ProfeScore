@@ -1,0 +1,437 @@
+body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        /* Oculta secciones con la clase hidden */
+.hidden {
+  display: none !important;
+}
+
+        select, input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        /* Estilos para checkboxes personalizados */
+.checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.checkbox-option {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-option input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #eee;
+    border-radius: 4px;
+}
+
+.checkbox-option:hover input ~ .checkmark {
+    background-color: #ddd;
+}
+
+.checkbox-option input:checked ~ .checkmark {
+    background-color: #3498db;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-option input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-option .checkmark:after {
+    left: 7px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Diseño para columnas de grupos */
+.groups-columns-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.group-column {
+    flex: 1;
+    min-width: 200px;
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.group-column h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.group-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Botones de navegación */
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .evaluation-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #eaf2f8;
+            border-radius: 5px;
+        }
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+        .rating-option {
+            text-align: center;
+        }
+        .rating-option input {
+            width: auto;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        .required:after {
+            content: " *";
+            color: red;
+        }
+
+    .rating-scale-description {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 0.9em;
+  color: #555;
+}
+/* Transiciones suaves */
+#form-container, #loading-screen {
+    transition: opacity 0.3s ease;
+}
+
+/* Mejora para la pantalla de error */
+#loading-screen button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#loading-screen button:hover {
+    background: #2980b9;
+}
+.cache-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 8px 15px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8em;
+    z-index: 1000;
+}
+
+.cache-button:hover {
+    background: #e5e5e5;
+}
+
+.spinner-mini {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* Sección de búsqueda de profesores */
+#search-teachers-section {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 24px 16px;
+  margin: 0 auto;
+  max-width: 500px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+#search-teacher-input {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+#search-teacher-results {
+  margin-bottom: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.checkbox-option input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.add-more-teachers-btn,
+#confirm-search-teachers,
+#back-to-teachers-from-search {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #3498db;
+  color: white;
+  cursor: pointer;
+  margin-right: 8px;
+  font-size: 1rem;
+}
+
+.add-more-teachers-btn:hover,
+#confirm-search-teachers:hover,
+#back-to-teachers-from-search:hover {
+  background: #217dbb;
+}
+
+/* Estilos para la búsqueda integrada */
+.inline-search-container {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px dashed #ddd;
+}
+
+.btn-search {
+  background-color: #4a6fa5;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-search:hover {
+  background-color: #3a5a8a;
+}
+
+.inline-search-box {
+  margin-top: 15px;
+  transition: all 0.3s ease;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.inline-search-box.visible {
+  max-height: 500px;
+}
+
+#inline-search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.inline-search-results {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.inline-search-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.inline-search-result:last-child {
+  border-bottom: none;
+}
+
+.btn-add {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+
+.btn-add:hover {
+  background-color: #218838;
+}
+
+.no-results {
+  padding: 10px;
+  color: #6c757d;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Animación para nuevo docente agregado */
+@keyframes highlight {
+  0% { background-color: rgba(40, 167, 69, 0.1); }
+  100% { background-color: transparent; }
+}
+
+.highlight {
+  animation: highlight 2s ease;
+}
+/* Estilos mínimos para la búsqueda integrada */
+.inline-search-container {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px dashed #ddd;
+}
+
+.btn-search {
+  background-color: #4a6fa5;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.inline-search-box {
+  margin-top: 15px;
+  display: none;
+}
+
+.inline-search-box.visible {
+  display: block;
+}
+
+#inline-search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.inline-search-results {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.inline-search-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.btn-add {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+}
