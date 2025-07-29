@@ -1,6 +1,6 @@
 // Configuración
 const CACHE_VALIDITY = 30 * 60 * 1000; // 30 minutos de caché
-const API_URL = 'https://script.google.com/macros/s/AKfycbx7bFe24fNSTSgEIB50AfDob10cQsv-ubhrJONDca0gykIuogPJAE7ozqojs3m-HsA-/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyOp2QxybDn4FSjn5aYO8DYQkI1i5LsiXIw2xy48yrjlVmMK97eeKq5TMk4L72stDNo/exec';
 
 // Variables globales
 let gruposPorSemestre = {};
