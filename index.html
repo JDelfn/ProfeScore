@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Docente</title>
+    
+    <!-- Precarga de recursos -->
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        /* Estilos del skeleton loading */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .skeleton {
+            background: #eee;
+            margin: 10px 0;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .skeleton::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .hidden {
+            display: none;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        select[multiple] {
+            height: 150px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .evaluation-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #eaf2f8;
+            border-radius: 5px;
+        }
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+        .rating-option {
+            text-align: center;
+        }
+        .rating-option input {
+            width: auto;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        .required:after {
+            content: " *";
+            color: red;
+        }
+        .add-more-teachers-btn {
+            background-color: #27ae60;
+            color: #fff;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            display: block;
+        }
+        .add-more-teachers-btn:hover {
+            background-color: #219150;
+        }
+        #search-teachers-section {
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            padding: 24px;
+            margin: 24px 0;
+            max-width: 600px;
+        }
+        #search-teacher-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        #search-teacher-results {
+            margin-bottom: 16px;
+        }
+        #search-teachers-section button {
+            margin-right: 10px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de carga -->
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <p>Cargando formulario...</p>
+        <!-- Skeleton Screen -->
+        <div style="width: 80%; max-width: 600px; margin-top: 30px; display: none;" id="skeleton-container">
+            <div class="skeleton" style="height: 30px; width: 60%;"></div>
+            <div class="skeleton" style="height: 20px; width: 90%;"></div>
+            <div class="skeleton" style="height: 100px; width: 100%;"></div>
+        </div>
+    </div>
+
+    <div id="form-container" style="display:none;">
+        <h1>Evaluación Docente</h1>
+        <p>Este es un proyecto enteramente hecho por y para los alumnos de la escuela, una herramienta que nos ayude a seleccionar grupo y tener una idea de cada uno de los profesores. Por favor contesta el formulario de manera responsable y consciente.</p>
+        
+        <!-- Sección 1: Selección de semestres -->
+        <div class="section" id="semesters-section">
+            <h2>1. Selección de Semestres</h2>
+            <label class="required">Selecciona los semestres en donde tomaste clase este ciclo:</label>
+            <div class="checkbox-container">
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="1"> 
+                    <span class="checkmark"></span>
+                    Primer Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="2"> 
+                    <span class="checkmark"></span>
+                    Segundo Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="3"> 
+                    <span class="checkmark"></span>
+                    Tercer Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="4"> 
+                    <span class="checkmark"></span>
+                    Cuarto Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="5"> 
+                    <span class="checkmark"></span>
+                    Quinto Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="6"> 
+                    <span class="checkmark"></span>
+                    Sexto Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="7"> 
+                    <span class="checkmark"></span>
+                    Séptimo Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="8"> 
+                    <span class="checkmark"></span>
+                    Octavo Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="9"> 
+                    <span class="checkmark"></span>
+                    Noveno Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="10"> 
+                    <span class="checkmark"></span>
+                    Décimo Semestre
+                </label>
+
+            </div>
+            <button type="button" id="next-to-groups">Siguiente</button>
+        </div>
+        <!-- Sección 2: Selección de grupos -->
+        <div class="section hidden" id="groups-section">
+            <h2>2. Selección de Grupos</h2>
+            <label class="required">Selecciona los grupos donde tomaste clase:</label>
+            <div class="groups-columns-container" id="groups-container">
+                <!-- Las columnas se generarán dinámicamente con JavaScript -->
+            </div>
+            <div class="navigation-buttons">
+                <button type="button" id="back-to-semesters">Anterior</button>
+                <button type="button" id="next-to-teachers">Siguiente</button>
+            </div>
+        </div>
+        <!-- Sección 3: Selección de docentes -->
+        <div class="section hidden" id="teachers-section">
+            <h2>3. Selección de Docentes</h2>
+            <label class="required">Selecciona los docentes con quienes tomaste clase:<br>(Si quieres calificar a algun otro docente de tus semestres pasados puedes buscarlo y agregarlo.)</label>
+            <div class="checkbox-container" id="teachers-container">
+                <!-- Los checkboxes de profesores y el botón "Agregar más docentes" se generan dinámicamente -->
+            </div>
+            <div class="navigation-buttons">
+                <button type="button" id="back-to-groups">Anterior</button>
+                <button type="button" id="next-to-evaluation">Siguiente</button>
+            </div>
+        </div>
+        <!-- Sección 4: Búsqueda de docentes -->
+        <section id="search-teachers-section" class="hidden">
+            <h2>Buscar docente</h2>
+            <input
+              id="search-teacher-input"
+              type="text"
+              placeholder="Escribe el nombre del docente..."
+              autocomplete="off"
+              style="width: 100%; margin-bottom: 10px;"
+            >
+            <div id="search-teacher-results" style="margin-bottom: 15px;"></div>
+            <div style="display: flex; gap: 10px;">
+              <button id="confirm-search-teachers" type="button">Agregar seleccionados</button>
+              <button id="back-to-teachers-from-search" type="button">Cancelar</button>
+            </div>
+        </section>
+        <!-- Sección 4: Evaluación de docentes -->
+        <div class="section hidden" id="evaluation-section">
+            <h2>4. Evaluación de Docentes</h2>
+            <div id="evaluation-items"></div>
+            <div class="navigation-buttons" style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
+                <button type="button" id="back-to-teachers">Anterior</button>
+                <!-- El botón de enviar se inserta dinámicamente por JS, aquí solo se reserva el espacio -->
+                <span id="submit-form-placeholder"></span>
+            </div>
+        </div>
+        <!-- Sección 5: Información de contacto
+        <section id="contact-section" class="hidden">
+            <input type="email" id="contact-email" placeholder="Tu correo electrónico" required>
+            <label>
+            <p>Si deseas recibir el archivo con la clasificación una vez que se terminen de recabar los datos, deja tu correo electronico.</p>
+            <button type="button" id="back-to-evaluation">Anterior</button>
+            <button type="button" id="submit-form">Enviar Evaluación</button>
+            </section>-->   
+
+        <!-- Sección de confirmación -->
+            <section id="confirmation-section" class="hidden">
+            <h2>¡Gracias por tu recomendación!</h2>
+            <p>Tu retroalimentación ha sido enviada correctamente.</p>
+            </section>
+
+    <footer>
+        <button id="clear-cache-btn" class="cache-button">
+            <i class="icon-refresh"></i> Actualizar datos
+        </button>
+    </footer>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+    
+<script>
+  // Configuración básica (usa tus valores)
+   const firebaseConfig = {
+    apiKey: "AIzaSyC-xvM9xOfg8SqdWej2ebMPQ75Im0mXpbc",
+    authDomain: "evaluacion-profesores-df107.firebaseapp.com",
+    projectId: "evaluacion-profesores-df107",
+    storageBucket: "evaluacion-profesores-df107.appspot.com",
+    messagingSenderId: "182131194576",
+    appId: "1:182131194576:web:fc4b91499a2bc1435cfcd5"
+  };
+
+  // Inicialización con manejo de errores
+  try {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    window.db = db; // Hacer disponible globalmente para debug
+  } catch (error) {
+    console.error("Error inicializando Firebase:", error);
+    document.getElementById('loading-screen').innerHTML = `
+      <div style="color: red; text-align: center;">
+        <h3>Error crítico</h3>
+        <p>No se pudo conectar a la base de datos</p>
+        <button onclick="window.location.reload()">Reintentar</button>
+      </div>
+    `;
+  }
+</script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
