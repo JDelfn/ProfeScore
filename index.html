@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfeScore</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="main-tabs">
+        <button id="tab-encuesta" class="tab-btn active"><i class="fas fa-edit"></i> Responder Encuesta</button>
+        <button id="tab-resultados" class="tab-btn"><i class="fas fa-chart-bar"></i> Ver Resultados</button>
+    </nav>
+
+    <section id="vista-encuesta">
+       <div id="loading-screen">
+        <div class="spinner"></div>
+        <p>Cargando formulario...</p>
+        <!-- Skeleton Screen -->
+        <div style="width: 80%; max-width: 600px; margin-top: 30px; display: none;" id="skeleton-container">
+            <div class="skeleton" style="height: 30px; width: 60%;"></div>
+            <div class="skeleton" style="height: 20px; width: 90%;"></div>
+            <div class="skeleton" style="height: 100px; width: 100%;"></div>
+        </div>
+    </div>
+
+<div id="form-container" style="display:none;">
+        <header class="survey-header">
+            <div class="header-content">
+                <h1><i class="fas fa-edit"></i> ProfeScore Encuesta</h1>
+                <p>Cada opinion nos ayuda a todos. Por favor contesta con responsabilidad.</p>
+            </div>
+            <div class="header-wave" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; background: inherit; opacity: 0.5;"></div>
+        </header>
+
+    <div class="survey-card">
+
+        <!-- Sección 1: Selección de semestres -->
+        <div class="section" id="semesters-section">
+            <h2>1. Selección de Semestres</h2>
+            <label class="required">Selecciona los semestres en donde tomaste clase este ciclo:</label>
+            <p>(Puedes seleccionar más de uno)</p>
+            <div class="checkbox-container">
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="1"> 
+                    <span class="checkmark"></span>
+                    Primer Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="2"> 
+                    <span class="checkmark"></span>
+                    Segundo Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="3"> 
+                    <span class="checkmark"></span>
+                    Tercer Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="4"> 
+                    <span class="checkmark"></span>
+                    Cuarto Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="5"> 
+                    <span class="checkmark"></span>
+                    Quinto Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="6"> 
+                    <span class="checkmark"></span>
+                    Sexto Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="7"> 
+                    <span class="checkmark"></span>
+                    Séptimo Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="8"> 
+                    <span class="checkmark"></span>
+                    Octavo Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="9"> 
+                    <span class="checkmark"></span>
+                    Noveno Semestre
+                </label>
+                <label class="checkbox-option">
+                    <input type="checkbox" name="semester" value="10"> 
+                    <span class="checkmark"></span>
+                    Décimo Semestre
+                </label>
+
+            </div>
+            <button type="button" id="next-to-groups">Siguiente</button>
+        </div>
+    
+        <!-- Sección 2: Selección de grupos -->
+        <div class="section hidden" id="groups-section">
+            <h2>2. Selección de Grupos</h2>
+            <label class="required">Selecciona los grupos donde tomaste clase:</label>
+            <p>(Puedes seleccionar más de uno)</p>
+
+            <div class="groups-columns-container" id="groups-container">
+                <!-- Las columnas se generarán dinámicamente con JavaScript -->
+            </div>
+            <div class="navigation-buttons">
+                <button type="button" id="back-to-semesters">Anterior</button>
+                <button type="button" id="next-to-teachers">Siguiente</button>
+            </div>
+        </div>
+        <!-- Sección 3: Selección de docentes -->
+        <div class="section hidden" id="teachers-section">
+            <h2>3. Selección de Docentes</h2>
+            <label class="required">Selecciona los docentes con quienes tomaste clase:<br>(Si quieres calificar a algun otro docente de tus semestres pasados puedes buscarlo y agregarlo.)</label>
+            <div class="checkbox-container" id="teachers-container">
+                <!-- Los checkboxes de profesores y el botón "Agregar más docentes" se generan dinámicamente -->
+            </div>
+            <div class="navigation-buttons">
+                <button type="button" id="back-to-groups">Anterior</button>
+                <button type="button" id="next-to-evaluation">Siguiente</button>
+            </div>
+        </div>
+        <!-- Sección 4: Búsqueda de docentes -->
+        <section id="search-teachers-section" class="hidden">
+            <h2>Buscar docente</h2>
+            <input
+              id="search-teacher-input"
+              type="text"
+              placeholder="Escribe el nombre del docente..."
+              autocomplete="off"
+              style="width: 100%; margin-bottom: 10px;"
+            >
+            <div id="search-teacher-results" style="margin-bottom: 15px;"></div>
+            <div style="display: flex; gap: 10px;">
+              <button id="confirm-search-teachers" type="button">Agregar seleccionados</button>
+              <button id="back-to-teachers-from-search" type="button">Cancelar</button>
+            </div>
+        </section>
+        <!-- Sección 4: Evaluación de docentes -->
+        <div class="section hidden" id="evaluation-section">
+            <h2>4. Evaluación de Docentes</h2>
+            <div id="evaluation-items"></div>
+            <div class="navigation-buttons" style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
+                <button type="button" id="back-to-teachers">Anterior</button>
+                <!-- El botón de enviar se inserta dinámicamente por JS, aquí solo se reserva el espacio -->
+                <span id="submit-form-placeholder"></span>
+            </div>
+        </div>
+
+            <section id="confirmation-section" class="hidden">
+            <h2>¡Gracias por tu recomendación!</h2>
+            <p>Tu retroalimentación ha sido enviada correctamente.</p>
+            </section>
+
+    </div><footer>
+        <button id="clear-cache-btn" class="cache-button">
+            <i class="icon-refresh"></i> Actualizar datos
+        </button>
+    </footer>
+    </div>
+
+    </section>
+
+    <section id="vista-resultados" class="hidden">
+  <div class="container">
+        <header>
+            <div class="header-wave"></div>
+            <div class="header-content">
+                <h1><i class="fas fa-chalkboard-teacher"></i> ProfeScore</h1>
+                <p>Visualiza las evaluaciones docentes, horarios y comentarios de los estudiantes.<br>
+                    <b>Para ver los comentarios de la gente sobre los doctores, da click sobre su nombre</b>
+                </p>
+                
+                <div class="color-info">
+                    <div class="color-item">
+                        <div class="color-box green"></div>
+                        <span>Recomendado (4.0 - 5.0)</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-box yellow"></div>
+                        <span>Regular (2.5 - 3.9)</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-box red"></div>
+                        <span>No recomendado (1.0 - 2.4)</span>
+                    </div>
+                </div>
+                
+                <div class="status-indicator">
+                    <span class="pulse"></span>
+                    <span id="status-text">Conectado - Esperando actualizaciones</span>
+                </div>
+            </div>
+        </header>
+        
+        <section class="controls">
+            <div class="filter-group">
+                <label for="semester"><i class="fas fa-calendar-alt"></i> Seleccionar Semestre</label>
+                <select id="semester">
+                    <option value="">Todos los semestres</option>
+                    <option value="1">Primer Semestre</option>
+                    <option value="2">Segundo Semestre</option>
+                    <option value="3">Tercer Semestre</option>
+                    <option value="4">Cuarto Semestre</option>
+                    <option value="5" selected>Quinto Semestre</option>
+                    <option value="6">Sexto Semestre</option>
+                    <option value="7">Séptimo Semestre</option>
+                    <option value="8">Octavo Semestre</option>
+                    <option value="9">Noveno Semestre</option>
+                    <option value="10">Décimo Semestre</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="group"><i class="fas fa-users"></i> Filtrar por Grupo</label>
+                <select id="group">
+                    <option value="">Todos los grupos</option>
+                    <!-- Los grupos se llenarán dinámicamente -->
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="search"><i class="fas fa-search"></i> Buscar profesor o asignatura</label>
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search" placeholder="Escribe para buscar..." class="search-input">
+                </div>
+            </div>
+        </section>
+        
+        <section class="table-container">
+            <div class="table-header">
+                <h2><i class="fas fa-table"></i> Resultados de Evaluaciones</h2>
+                <div class="last-updated">Última actualización: <span id="last-updated">Hace unos momentos</span></div>
+            </div>
+            <table id="evaluation-table">
+                <thead>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Asignatura</th>
+                        <th>Profesor</th>
+                        <th>Puntuación</th>
+                        <th>Lunes</th>
+                        <th>Martes</th>
+                        <th>Miércoles</th>
+                        <th>Jueves</th>
+                        <th>Viernes</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Datos se llenarán con JavaScript -->
+                </tbody>
+            </table>
+        </section>
+        
+
+        
+        <footer>
+            <p>Sistema de Evaluación Docente &copy; 2023 | Actualización en tiempo real | Desarrollado para mejorar la educación</p>
+        </footer>
+        </div>
+    </section>
+
+        <div class="modal" id="comments-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">Comentarios de estudiantes</div>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="comments-container">
+                        <!-- Comentarios se llenarán con JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+    <script src="main.js"></script>
+</body>
+</html>
