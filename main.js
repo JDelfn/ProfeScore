@@ -712,6 +712,7 @@ function crearEvaluaciones() {
     const navBtns = document.createElement('div');
     navBtns.className = 'navigation-buttons';
     navBtns.style.display = 'flex';
+    navBtns.style.gap = '15px';
     navBtns.style.justifyContent = 'space-between';
     navBtns.style.marginTop = '20px';
 
