@@ -1322,9 +1322,9 @@ function renderTable(data) {
             <td class="professor-cell" onclick="showComments('${item.professor}')" style="cursor:pointer; color:#3498db; font-weight:bold;">
                 <i class="fas fa-user-graduate"></i> ${item.professor}
             </td>
-            `<td class="building-tooltip" title="${nombreCompletoSede}">
+            <td class="building-tooltip" title="${nombreCompletoSede}">
                 ${item.building} <i class="fas fa-info-circle" style="font-size:0.7em; opacity:0.5;"></i>
-            </td>`
+            </td>
             <td><span class="rating ${ratingClass}">${item.rating.toFixed(1)}</span></td>
             <td>${item.schedule.monday || '-'}</td>
             <td>${item.schedule.tuesday || '-'}</td>
