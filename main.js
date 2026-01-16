@@ -2,7 +2,7 @@
 
 //CONFIGURACIÓN GLOBAL Y FIREBASE ---
 const firebaseConfig = {
-    apiKey: "AlzaSyC-xvM9xOfg8SqdWej2ebMPQ75lm0mXpbc",
+    apiKey: "AIzaSyC-xvM9xOfg8SqdWej2ebMPQ75Im0mXpbc",
     authDomain: "evaluacion-profesores-df107.firebaseapp.com",
     projectId: "evaluacion-profesores-df107", 
     storageBucket: "evaluacion-profesores-df107.appspot.com", 
@@ -1277,18 +1277,17 @@ function showComments(professor) {
     commentsModal.style.display = 'flex';
 }
 
-// --- FUNCIÓN FALTANTE: RENDERIZAR TABLA ---
+// --- RENDERIZAR TABLA (SOPORTE PARA CELULAR) ---
 function renderTable(data) {
     const tableBody = document.querySelector('#vista-resultados #table-body');
     tableBody.innerHTML = '';
     
-    // Reiniciamos lastGroup para los divisores visuales
     lastGroup = null; 
 
     if (data.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="9" style="text-align: center; padding: 30px;">
+                <td colspan="10" style="text-align: center; padding: 30px;">
                     <h3>No se encontraron resultados</h3>
                     <p>Intenta con otros filtros.</p>
                 </td>
@@ -1303,7 +1302,7 @@ function renderTable(data) {
         if (lastGroup !== null && lastGroup !== item.group) {
             const dividerRow = document.createElement('tr');
             dividerRow.className = 'group-divider';
-            dividerRow.innerHTML = `<td colspan="9"></td>`;
+            dividerRow.innerHTML = `<td colspan="10"></td>`;
             tableBody.appendChild(dividerRow);
         }
 
@@ -1315,14 +1314,18 @@ function renderTable(data) {
         else if (item.rating >= 2.5) row.style.backgroundColor = 'rgba(243, 156, 18, 0.1)';
         else if (item.rating >= 1.0) row.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
 
+        // 1. Calculamos el nombre del edificio
         const nombreCompletoSede = NOMBRES_SEDES[item.building] || "Sede externa / Por definir";
+
+        // 2. Construimos el HTMl
         row.innerHTML = `
             <td>${item.group}</td>
             <td>${item.subject}</td>
             <td class="professor-cell" onclick="showComments('${item.professor}')" style="cursor:pointer; color:#3498db; font-weight:bold;">
                 <i class="fas fa-user-graduate"></i> ${item.professor}
             </td>
-            <td class="building-tooltip" title="${nombreCompletoSede}">
+            
+            <td class="building-tooltip" title="${nombreCompletoSede}" onclick="alert('${nombreCompletoSede}')">
                 ${item.building} <i class="fas fa-info-circle" style="font-size:0.7em; opacity:0.5;"></i>
             </td>
             <td><span class="rating ${ratingClass}">${item.rating.toFixed(1)}</span></td>
