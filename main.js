@@ -1315,13 +1315,13 @@ function renderTable(data) {
         else if (item.rating >= 2.5) row.style.backgroundColor = 'rgba(243, 156, 18, 0.1)';
         else if (item.rating >= 1.0) row.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
 
+        const nombreCompletoSede = NOMBRES_SEDES[item.building] || "Sede externa / Por definir";
         row.innerHTML = `
             <td>${item.group}</td>
             <td>${item.subject}</td>
             <td class="professor-cell" onclick="showComments('${item.professor}')" style="cursor:pointer; color:#3498db; font-weight:bold;">
                 <i class="fas fa-user-graduate"></i> ${item.professor}
             </td>
-            const nombreCompletoSede = NOMBRES_SEDES[item.building] || "Sede externa / Por definir";
             `<td class="building-tooltip" title="${nombreCompletoSede}">
                 ${item.building} <i class="fas fa-info-circle" style="font-size:0.7em; opacity:0.5;"></i>
             </td>`
