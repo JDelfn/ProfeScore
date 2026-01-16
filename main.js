@@ -1031,6 +1031,7 @@ function combineScheduleAndEvaluations() {
             group: scheduleItem.Grupo || scheduleItem.group,
             subject: scheduleItem.Asignatura || scheduleItem.subject,
             professor: professorName,
+            building: scheduleItem.Edificio || scheduleItem.building || '-',
             rating: stats.rating,
             comments: stats.comments,
             schedule: {
@@ -1254,6 +1255,7 @@ function renderTable(data) {
             <td class="professor-cell" onclick="showComments('${item.professor}')" style="cursor:pointer; color:#3498db; font-weight:bold;">
                 <i class="fas fa-user-graduate"></i> ${item.professor}
             </td>
+            <td style="font-weight:bold; color:#555;">${item.building}</td>
             <td><span class="rating ${ratingClass}">${item.rating.toFixed(1)}</span></td>
             <td>${item.schedule.monday || '-'}</td>
             <td>${item.schedule.tuesday || '-'}</td>
