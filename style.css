@@ -1277,3 +1277,16 @@ button#back-to-semesters:hover {
     position: relative;
     z-index: 10;
 }
+/* Estilo para la celda de Edificio con Tooltip */
+.building-tooltip {
+    cursor: help; /* Cambia el cursor a un signo de interrogación */
+    text-decoration: underline dotted #95a5a6; /* Subrayado punteado sutil */
+    color: #2c3e50;
+    font-weight: bold;
+    position: relative;
+}
+
+.building-tooltip:hover {
+    background-color: #f0f8ff; /* Se ilumina un poco al pasar el mouse */
+    color: #3498db;
+}
