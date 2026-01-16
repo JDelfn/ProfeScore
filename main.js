@@ -10,6 +10,72 @@ const firebaseConfig = {
     appId: "1:182131194576:web:fc4b91499a2bc1435cfcd5" 
 };
 
+//Diccionario de abreviaciones
+const NOMBRES_SEDES = {
+    "6": "Centro Gerontológico Mundet",
+    "2A": "Instituto Nacional de Rehabilitación",
+    "25": "Instituto Nacional de Cancerología",
+    "29": "Hospital Regional Tacuba ISSSTE",
+    "30": "Hospital de Zona No. 48 San Pedro Xalpa",
+    "46": "Servicio General",
+    "AA": "Hospital General de Zona No. 24",
+    "AB": "Hospital General de Zona No. 27",
+    "AC": "Hospital General Centro Médico La Raza",
+    "AE": "Hospital de Infectología C.M. La Raza",
+    "AH": "Hospital de Especialidades C.M.N. Siglo XXI",
+    "AI": "Hospital de Cardiología C.M.N. Siglo XXI",
+    "AJ": "Hospital de Oncología C.M.N. Siglo XXI IMSS",
+    "AK": "Hospital Centro Médico Nacional Siglo XXI",
+    "AL": "Hospital 1ro. de Octubre",
+    "AM": "Hospital Darío Fernández",
+    "AN": "Hospital Adolfo López Mateos",
+    "AÑ": "Clínica de Especialidades Churubusco",
+    "AO": "Clínica de Especialidades Tlatelolco",
+    "AP": "Hospital General de México",
+    "AQ": "Hospital Juárez de México",
+    "AR": "Hospital Juárez Centro",
+    "AS": "Hospital Psiquiátrico Fray Bernardino Álvarez",
+    "AT": "Instituto Nacional de Neurología",
+    "AU": "Instituto Nacional de Enfermedades Respiratorias",
+    "AV": "Instituto Nacional de Pediatría",
+    "AW": "Hospital Gea González",
+    "AX": "Hospital Rubén Leñero",
+    "AY": "Hospital General Xoco",
+    "AZ": "Hospital Infantil Legaria",
+    "BA": "Centro de Salud Camarones",
+    "BC": "Hospital de la Mujer",
+    "BD": "Hospital Infantil Azcapotzalco",
+    "BE": "Hospital Central Norte PEMEX",
+    "BF": "Hospital General La Villa",
+    "BG": "Hospital General Enrique Cabrera",
+    "BH": "INCIFO (Ciencias Forenses / SEMEFO)",
+    "BI": "Hospital General de Balbuena",
+    "BJ": "Hospital de Ortopedia Victorio de la Fuente Narváez IMSS",
+    "BM": "Hospital General de Zona #41 IMSS",
+    "BN": "Clínica de Esp. Leonardo y Nicolás Bravo ISSSTE",
+    "BQ": "Hospital Mat. Infantil de Inguarán",
+    "BT": "Hospital General de Zona N32 IMSS Coapa",
+    "G3": "Gineco y Obstetricia 3-A La Raza IMSS",
+    "H1": "Hospital General Naucalpan",
+    "H2": "Hospital 20 de Noviembre",
+    "H3": "HGZ Num 47 IMSS Vicente Guerrero",
+    "H4": "Hospital Tultitlán ISSSTE",
+    "H5": "Hospital General Tláhuac",
+    "H7": "Hospital General de Zona Num. 196 Aragón IMSS",
+    "HF": "Hospital Reg. Fernando Quiroz",
+    "HB": "Hospital Balbuena",
+    "HR": "Hospital Regional de Alta Especialidad Zumpango",
+    "HT": "HGZ No. 2-A Francisco del Paso y Troncoso",
+    "HX": "Hospital Regional de Alta Especialidad Ixtapaluca",
+    "HZ": "Hospital General de Zona No. 29 IMSS",
+    "J1": "Hospital General Gregorio Salas",
+    "NI": "Hospital General de Naucalpan ISEM",
+    "RI": "Hospital de Alta Especialidad Belisario Domínguez",
+    "XX": "Hospital de Pediatría C.M.N. Siglo XXI",
+    "ZK": "Hospital General José María Morelos y Pavón",
+    "ZL": "Hospital General de Zona Num. 1 Mc Gregor",
+    "ZM": "Hospital de PEMEX Sur"
+};
 // Inicialización única
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore(); 
@@ -1255,7 +1321,10 @@ function renderTable(data) {
             <td class="professor-cell" onclick="showComments('${item.professor}')" style="cursor:pointer; color:#3498db; font-weight:bold;">
                 <i class="fas fa-user-graduate"></i> ${item.professor}
             </td>
-            <td style="font-weight:bold; color:#555;">${item.building}</td>
+            const nombreCompletoSede = NOMBRES_SEDES[item.building] || "Sede externa / Por definir";
+            `<td class="building-tooltip" title="${nombreCompletoSede}">
+                ${item.building} <i class="fas fa-info-circle" style="font-size:0.7em; opacity:0.5;"></i>
+            </td>`
             <td><span class="rating ${ratingClass}">${item.rating.toFixed(1)}</span></td>
             <td>${item.schedule.monday || '-'}</td>
             <td>${item.schedule.tuesday || '-'}</td>
