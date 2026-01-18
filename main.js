@@ -1315,7 +1315,7 @@ function renderTable(data) {
         else if (item.rating >= 1.0) row.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
 
         // 1. Calculamos el nombre del edificio
-        const nombreCompletoSede = NOMBRES_SEDES[item.building] || "Sede externa / Por definir";
+        const nombreCompletoSede = NOMBRES_SEDES[item.building] || "Edifico en la escuela.";
 
         // 2. Construimos el HTMl
         row.innerHTML = `
