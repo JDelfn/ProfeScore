@@ -72,9 +72,12 @@ const NOMBRES_SEDES = {
     "NI": "Hospital General de Naucalpan ISEM",
     "RI": "Hospital de Alta Especialidad Belisario Domínguez",
     "XX": "Hospital de Pediatría C.M.N. Siglo XXI",
+    "ZJ": "Hospital Regional General Ignacio Zaragoza",
     "ZK": "Hospital General José María Morelos y Pavón",
     "ZL": "Hospital General de Zona Num. 1 Mc Gregor",
-    "ZM": "Hospital de PEMEX Sur"
+    "ZM": "Hospital de PEMEX Sur",
+    "ZN": "Instituto Nacional de Geriatria",
+    "ZO": "CMF Ignacio Chavez"
 };
 // Inicialización única
 firebase.initializeApp(firebaseConfig);
