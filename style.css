@@ -1290,3 +1290,10 @@ button#back-to-semesters:hover {
     background-color: #f0f8ff; /* Se ilumina un poco al pasar el mouse */
     color: #3498db;
 }
+
+.rating-count {
+    display: block;
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+}
