@@ -88,6 +88,13 @@ const API_URL_FORM = 'https://script.google.com/macros/s/AKfycbyOp2QxybDn4FSjn5a
 const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQa3aGxJT18QCegGY4ol0ZV2n3wBG2gQ_KM2kux_NxUJkvXMF7fIaDe5EVMIH3vUEjDUUoInMkZEW-T/pub?output=csv';
 const CACHE_VALIDITY = 30 * 60 * 1000;
 
+// --- CONFIGURACIÓN DEL PROMEDIO BAYESIANO ---
+// m = número de opiniones que consideramos necesarias para "confiar" del todo
+// en el promedio real de un profesor. Con menos opiniones que esto, el rating
+// mostrado se acerca más al promedio general (C); entre más opiniones tenga
+// el profesor, más se acerca a su promedio real.
+const BAYESIAN_M = 5;
+
 // VARIABLES DE ESTADO ---
 // Variables para la Encuesta
 let gruposPorSemestre = {}; 
@@ -1042,6 +1049,10 @@ const tableBody = document.querySelector('#vista-resultados #table-body'); // Se
 const commentsModal = document.getElementById('comments-modal');
 const commentsContainer = document.getElementById('comments-container');
 const professorNameElement = document.querySelector('.modal-title');
+// Opcional: si agregas un <p class="modal-stats-subtitle"></p> junto al
+// modal-title en tu HTML, aquí se mostrará "Promedio: X · N opiniones".
+// Si no existe el elemento, simplemente no se muestra (no rompe nada).
+const professorStatsSubtitleElement = document.querySelector('.modal-stats-subtitle');
 const lastUpdatedElement = document.getElementById('last-updated');
 // Nota: 'lastGroup' ya está definida arriba, no la re-declares aquí.
 
@@ -1101,7 +1112,9 @@ function combineScheduleAndEvaluations() {
             subject: scheduleItem.Asignatura || scheduleItem.subject,
             professor: professorName,
             building: scheduleItem.Edificio || scheduleItem.building || '-',
-            rating: stats.rating,
+            rating: stats.rating,       // rating bayesiano (usado para color)
+            rawRating: stats.rawRating, // promedio real, sin ajustar
+            count: stats.count,         // número de opiniones
             comments: stats.comments,
             schedule: {
                 monday: scheduleItem.Lunes || scheduleItem.monday,
@@ -1115,25 +1128,43 @@ function combineScheduleAndEvaluations() {
     return combinedData;
 }
 
+// Promedio global (C): promedio de TODAS las evaluaciones de TODOS los
+// profesores. Sirve como "punto neutro" hacia el cual se jala el rating
+// de un profesor cuando tiene pocas opiniones.
+function calculateGlobalAverageRating() {
+    if (evaluationsFirestore.length === 0) return 0;
+    const total = evaluationsFirestore.reduce((sum, evaluation) => sum + evaluation.rating, 0);
+    return total / evaluationsFirestore.length;
+}
+
 function calculateProfessorStats(professorName) {
     const professorEvaluations = evaluationsFirestore.filter(e => e.professor === professorName);
-    
-    if (professorEvaluations.length === 0) {
-        return { rating: 0, comments: [] };
-    }
-    
-    const totalRating = professorEvaluations.reduce((sum, evaluation) => sum + evaluation.rating, 0);
-    const averageRating = totalRating / professorEvaluations.length;
-    
+
     const comments = professorEvaluations
         .filter(e => e.comment && e.comment.trim() !== '')
         .map(e => ({
             text: e.comment,
             date: e.timestamp ? formatDate(new Date(e.timestamp)) : 'Fecha desconocida'
         }));
-        
+
+    if (professorEvaluations.length === 0) {
+        return { rating: 0, rawRating: 0, count: 0, comments: [] };
+    }
+
+    const totalRating = professorEvaluations.reduce((sum, evaluation) => sum + evaluation.rating, 0);
+    const count = professorEvaluations.length;
+    const rawRating = totalRating / count; // promedio real (R), sin ajustar
+
+    // Promedio bayesiano: (v/(v+m))*R + (m/(v+m))*C
+    const C = calculateGlobalAverageRating();
+    const v = count;
+    const m = BAYESIAN_M;
+    const bayesianRating = ((v / (v + m)) * rawRating) + ((m / (v + m)) * C);
+
     return {
-        rating: averageRating,
+        rating: bayesianRating, // este es el que se usa para color y badge
+        rawRating: rawRating,   // promedio real, por si se quiere mostrar aparte
+        count: count,           // número de opiniones
         comments: comments
     };
 }
@@ -1253,8 +1284,15 @@ function removeDiacritics(str) {
 function showComments(professor) {
     const stats = calculateProfessorStats(professor);
     
-    if(professorNameElement) professorNameElement.textContent = `Comentarios sobre ${professor}`;
-    
+    if(professorNameElement) {
+        professorNameElement.textContent = `Comentarios sobre ${professor}`;
+    }
+    if(professorStatsSubtitleElement) {
+        professorStatsSubtitleElement.textContent = stats.count > 0
+            ? `Promedio: ${stats.rawRating.toFixed(1)} · ${stats.count} opinion${stats.count === 1 ? '' : 'es'}`
+            : 'Sin opiniones registradas';
+    }
+
     if (stats.comments.length > 0) {
         let commentsHTML = '<ul class="comments-list">';
         stats.comments.forEach(comment => {
@@ -1331,7 +1369,12 @@ function renderTable(data) {
             <td class="building-tooltip" title="${nombreCompletoSede}" onclick="alert('${nombreCompletoSede}')">
                 ${item.building} <i class="fas fa-info-circle" style="font-size:0.7em; opacity:0.5;"></i>
             </td>
-            <td><span class="rating ${ratingClass}">${item.rating.toFixed(1)}</span></td>
+            <td>
+                <span class="rating ${ratingClass}">${item.rating.toFixed(1)}</span>
+                <span class="rating-count" title="Basado en ${item.count} opinion${item.count === 1 ? '' : 'es'}">
+                    ${item.count === 0 ? 'Sin opiniones' : (item.count === 1 ? '1 opinión' : item.count + ' opiniones')}
+                </span>
+            </td>
             <td>${item.schedule.monday || '-'}</td>
             <td>${item.schedule.tuesday || '-'}</td>
             <td>${item.schedule.wednesday || '-'}</td>
